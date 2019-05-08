@@ -20,6 +20,7 @@ public class Rocket : MonoBehaviour
     [SerializeField] ParticleSystem DeathPart;
     Rigidbody rigidBody;
     AudioSource audioSource;
+    bool CollisionsAreDisabled = false;
 
     enum State {Alive, Dead, Trancending}
     State state = State.Alive;
@@ -38,11 +39,26 @@ public class Rocket : MonoBehaviour
             Thrust();
             Rotation();
         }
+
+        if(Debug.isDebugBuild){
+            RespondToDebugKeys();
+        }
+    }
+
+    private void RespondToDebugKeys()
+    {
+        if(Input.GetKeyDown(KeyCode.L)){
+            LoadNextLevel();
+        }
+
+        if(Input.GetKeyDown(KeyCode.C)){
+            CollisionsAreDisabled = !CollisionsAreDisabled;
+        }
     }
 
     void OnCollisionEnter(Collision collision){
 
-        if(state != State.Alive){return;}
+        if(state != State.Alive || CollisionsAreDisabled){return;}
 
         switch (collision.gameObject.tag)
         {
